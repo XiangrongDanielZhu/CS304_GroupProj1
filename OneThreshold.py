@@ -1,20 +1,34 @@
 import math
 import numpy as np
 
-def check_stop(frame_data,frame_len):
+def check_stop(frame_data,frame_len,level, background, forgetfactor = 2,adjustment = 0.05, threshold =4.6*10**7):
     en, en_log = energy(frame_data,frame_len)
-    print(en[-1]/10**6)
+    current = en[0]
+    #print(current)
+    isSpeech = 0
+    level = ((level * forgetfactor) + current)/(forgetfactor + 1)
+    if current < background:
+        background = current
+    else:
+        background += (current - background) * adjustment
+    if level < background:
+        level = background
+    if level - background > threshold:
+        isSpeech = 1
+    print(level - background)
+    return isSpeech, level, background
+    """ print(en[-1]/10**6)
     #print(len(en))
     IsSpeech, det = endpoint(en,forget_factor = 2, adjustment = 0.05, threshold= 5.4*10**6)
     remove_zero(IsSpeech)
-#   IsSpeech, det = endpoint(en_log, forget_factor=3, adjustment=0.05, threshold=0.36)
+    #IsSpeech, det = endpoint(en_log, forget_factor=3, adjustment=0.05, threshold=0.36)
     #print(IsSpeech)
     check = 0
     for i in range(len(IsSpeech)-5,len(IsSpeech)):
         check += IsSpeech[i]
     if check == 0:
         return True
-    return False
+    return False """
     
 def endpoint(data,forget_factor, adjustment, threshold):
     background = part_sum(0,10,data)

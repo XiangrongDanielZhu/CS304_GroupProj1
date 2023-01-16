@@ -37,12 +37,11 @@ background_data = []
 loop = True
 
 
-# skip the first 0.32 seconds
-for i in range(5):
+# skip a little bit
+for i in range(7):
     stream.read(chunk)
-
 # record first 10 frames as backgound
-for i  in range(10):
+for j  in range(10):
     data = stream.read(chunk)
     frames.append(data)
     background_data += convert_data(data)
@@ -50,13 +49,19 @@ for i  in range(10):
 background_en, _ = OneThreshold.energy(background_data, chunk)
 background = OneThreshold.part_sum(0, 10, background_en)
 level = background_en[0]
-
+IsSpeech = [1 for i in range(5)]
+print("backgound: ", background)
 while loop:
     data = stream.read(chunk)
     frames.append(data)
     rt_data = convert_data(data)
-    frame_data += rt_data
-    if OneThreshold.check_stop(frame_data,1024):
+    # smoothing here
+    terminate, level, background = OneThreshold.check_stop(rt_data,1024, level, background)
+    IsSpeech.append(terminate)
+    check = 0
+    for idx in range(len(IsSpeech)-5,len(IsSpeech)):
+        check += IsSpeech[idx]
+    if check == 0:
         stream.stop_stream()
         stream.close()
         p.terminate()
@@ -64,7 +69,9 @@ while loop:
     else:
         loop = True
     #print(rt_data.shape)
-    
+stream.stop_stream()
+stream.close()
+p.terminate()   
  
 # Stop and close the Stream and PyAudio
 
