@@ -1,7 +1,7 @@
 import math
 import numpy as np
 
-def check_stop(frame_data,frame_len,level, background, forgetfactor = 1,adjustment = 0.05, threshold = 0):
+def check_stop(frame_data,frame_len,level, background, onSpeechFlag, forgetfactor = 3,adjustment = 0.05, threshold = 1):
     _, en_log = energy(frame_data,frame_len)
     current = en_log[0]
     isSpeech = 0
@@ -14,8 +14,9 @@ def check_stop(frame_data,frame_len,level, background, forgetfactor = 1,adjustme
         level = background
     if level - background > threshold:
         isSpeech = 1
-    print((level - background) * 10)
-    return isSpeech, level, background
+        onSpeechFlag = True
+    print((level - background))
+    return isSpeech, level, background, onSpeechFlag
 
 def energy(frame_data,frame_len):
     en, en_log = [], []

@@ -52,22 +52,22 @@ background = OneThreshold.part_sum(0, 10, bg_energy_log)/10
 level = bg_energy_log[0]
 IsSpeech = [1 for i in range(5)]
 print("backgound: ", background)
+onSpeechFlag = False
 while loop:
     data = stream.read(chunk)
     frames.append(data)
     rt_data = convert_data(data)
     # smoothing here
-    terminate, level, background = OneThreshold.check_stop(rt_data,1024, level, background)
+    terminate, level, background, onSpeechFlag = OneThreshold.check_stop(rt_data,1024, level, background, onSpeechFlag)
     IsSpeech.append(terminate)
     check = 0
     for idx in range(len(IsSpeech)-5,len(IsSpeech)):
         check += IsSpeech[idx]
     if check == 0:
-        stream.stop_stream()
-        stream.close()
-        p.terminate()
         loop = False
     else:
+        loop = True
+    if not onSpeechFlag:
         loop = True
     #print(rt_data.shape)
 stream.stop_stream()
