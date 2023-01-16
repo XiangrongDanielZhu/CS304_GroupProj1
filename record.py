@@ -38,7 +38,7 @@ loop = True
 
 
 # skip a little bit
-for i in range(7):
+for i in range(16):
     stream.read(chunk)
 # record first 10 frames as backgound
 for j  in range(10):
@@ -46,9 +46,10 @@ for j  in range(10):
     frames.append(data)
     background_data += convert_data(data)
 
-background_en, _ = OneThreshold.energy(background_data, chunk)
-background = OneThreshold.part_sum(0, 10, background_en)
-level = background_en[0]
+_, bg_energy_log = OneThreshold.energy(background_data, chunk)
+print(bg_energy_log)
+background = OneThreshold.part_sum(0, 10, bg_energy_log)/10
+level = bg_energy_log[0]
 IsSpeech = [1 for i in range(5)]
 print("backgound: ", background)
 while loop:
