@@ -1,6 +1,7 @@
 import math
 import numpy as np
 
+# adaptive endpointing algorithm
 def check_stop(frame_data,frame_len,level, background, onSpeechFlag, forgetfactor = 3,adjustment = 0.05, threshold = 1):
     _, en_log = energy(frame_data,frame_len)
     current = en_log[0]
@@ -14,10 +15,12 @@ def check_stop(frame_data,frame_len,level, background, onSpeechFlag, forgetfacto
         level = background
     if level - background > threshold:
         isSpeech = 1
+        # first time entering speech part, turn the on-speech flag on
         onSpeechFlag = True
     print((level - background))
     return isSpeech, level, background, onSpeechFlag
 
+# calculate the energy of frames
 def energy(frame_data,frame_len):
     en, en_log = [], []
     for i in range(0,len(frame_data),frame_len):
@@ -32,6 +35,7 @@ def energy(frame_data,frame_len):
             en_log.append(math.log10(temp_en))
     return(en,en_log)
 
+# a helper function to calculate the sum
 def part_sum(start,end,target):
     sum = 0
     for i in range(start,end):
