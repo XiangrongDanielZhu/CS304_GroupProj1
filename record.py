@@ -1,6 +1,5 @@
 import pyaudio
 import wave
-from endpointing import *
 import numpy as np
 import OneThreshold
 import keyboard
@@ -29,16 +28,12 @@ stream = p.open(format=sample_format,
 frames = []  # Initialize array to store frames
 frame_data = []
 loop = True
-# Store data in chunks for 10 seconds
 
-for i in range(20):
-    data = stream.read(chunk)
-    frames.append(data)
-    rt_data = np.frombuffer(data, np.dtype('<i2'))
-    rt_data.shape = -1,1
-    rt_data = rt_data.T[0].tolist()
-    frame_data += rt_data
-    #print(len(frame_data)/1024)
+
+# skip the first 0.32 seconds
+
+for i in range(5):
+    stream.read(chunk)
 
 while loop:
     data = stream.read(chunk)
