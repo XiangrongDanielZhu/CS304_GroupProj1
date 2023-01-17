@@ -6,7 +6,7 @@ def check_stop(frame_data,frame_len):
     print(en[-1]/10**6)
     #print(len(en))
     IsSpeech, det = endpoint(en,forget_factor = 2, adjustment = 0.05, threshold= 5.4*10**6)
-    remove_zero(IsSpeech)
+    smooth(IsSpeech)
 #   IsSpeech, det = endpoint(en_log, forget_factor=3, adjustment=0.05, threshold=0.36)
     #print(IsSpeech)
     check = 0
@@ -76,7 +76,7 @@ def remove_zero(L1, L2):
         
     return L1, L2
 
-def remove_zero(L1):
+def smooth(L1):
     i=0
     while i<=(len(L1)-5):
         if zeroCount(L1[i:i+5])==1:
